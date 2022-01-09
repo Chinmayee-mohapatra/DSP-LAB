@@ -15,7 +15,7 @@ void palindrome(char s[]) {
 		left=i-1;
 		right=i;
 		
-		while(s[left]==s[right] && left>0 && right<strlen(s)){ //check for even sized palindrome substring
+		while(s[left]==s[right] && left>=0 && right<strlen(s)){ //check for even sized palindrome substring
 			if(right - left + 1 > end){
 				beg = left;
 				end = right - left + 1; 
@@ -27,7 +27,7 @@ void palindrome(char s[]) {
 		left=i-1;
 		right=i+1;
 		
-		while(s[left]==s[right] && left>0 && right<strlen(s)){ //check for odd sized palindrome substring
+		while(s[left]==s[right] && left>=0 && right<strlen(s)){ //check for odd sized palindrome substring
 			if(right - left + 1 > end){
 				beg = left;
 				end = right - left + 1; 
