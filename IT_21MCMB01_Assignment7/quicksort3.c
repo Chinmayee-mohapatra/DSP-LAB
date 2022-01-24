@@ -2,136 +2,124 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define MAX 100000
+
+void swap(int *a, int *b) {
+	int t = *a;
+	*a = *b;
+	*b = t;
+}
 
 //function to take median of {first element, middle element, last element} from the array as pivot element
-int m_pivot(int *arr,int p,int r){
-	int x,y,z,t,pivot;
-	x=arr[p];
-	y=arr[r];
-	t=p+((r-p)/2);
-	z=arr[t];
-	
-	if(x<=y && x<=z){
-		pivot=((y<=z)?y:z);
-	}
-	else
-	if(y<=x && y<=z){
-		pivot=((x<=z)?x:z);
-	}
-	else
-	if(z<=x && z<=y){
-		pivot=((x<=y)?x:y);
-	}
-	
-	return pivot;
-}
-
-//function to do the partion operation on the array
-int partition(int *arr, int p, int q){
-	int x,i,j,temp;
-	x=m_pivot(arr,p,q);
-	i=p;
-	
-	for(j=p+1;j<=q;j++){
-		if(arr[j]<=x){
-			i=i+1;
-			temp=arr[i];
-			arr[i]=arr[j];
-			arr[j]=temp;
+int pivot_last(int arr[], int low, int high) {
+	int pivot = arr[high];
+	int i = (low - 1),j;
+ 
+	for (j = low; j < high; j++) {
+		if (arr[j] < pivot) {
+		swap(&arr[++i], &arr[j]);
 		}
 	}
-	
-	temp=arr[p];
-	arr[p]=arr[i];
-	arr[i]=temp;
-	
-	return i;
+ 
+	swap(&arr[i + 1], &arr[high]);
+	return (i + 1);
 }
 
-//function to call quicksort recursively for every subarray
-void quicksort(int *arr,int p,int r){
-	int q,i;
-	if(p<r){
-		q=partition(arr,p,r);
-		quicksort(arr,p,q-1);
-		quicksort(arr,q+1,r);
+int pivot_median(int arr[], int low, int high) {
+	
+	int pivot;
+	int mid = (low + high) / 2;
+	if (arr[mid] < arr[low]) 
+		swap(&arr[mid], &arr[low]);
+		
+	if (arr[high] < arr[low])
+		swap(&arr[high], &arr[low]);
+		
+	if (arr[high] < arr[mid])
+		swap(&arr[high], &arr[mid]);
+		
+	swap(&arr[mid], &arr[high-1]);
+	
+	pivot = arr[high-1];
+ 
+	return pivot_last(arr, low, high);
+}
+ 
+void quickSort(int array[], int low, int high) {	
+	if (low < high) {
+		int pi = pivot_median(array, low, high);
+		quickSort(array, low, pi - 1);
+		quickSort(array, pi + 1, high);
 	}
 }
 
 //main function
 int main(){
-	FILE* fp;	
-	int i,choice,temp,p;
-	int *arr;
-
+	int i,choice,temp,p,max;
 	clock_t t1,t2;
 
 	printf("Implementation of quicksort with median of {first, middle and last element} as pivot.\n");
 	printf("---------------------------------------------------------------------------------------\n");
 
-	while(1){
-		printf("\nEnter choice:- \n");
-		printf("1. Random input\n");
-		printf("2. Sorted input\n");
-		printf("3. Sorted with 1% as random input\n");
-		printf("4. Exit\n");
-		scanf("%d",&choice);
+	printf("Enter the no of elements:- \n");
+	scanf("%d",&max);
 	
-		arr = (int)malloc(sizeof(int)*MAX);
-		
-		if(choice == 1){
-			fp = fopen("random_input.txt","r");
-			for(i=0 ; i<MAX ; i++){
-				fscanf(fp,"%d",&arr[i]);
-			}
-		}
-		else 
-		if(choice == 2){
-			fp = fopen("sorted_input.txt","r");
-			for(i=0 ; i<MAX ; i++){
-				fscanf(fp,"%d",&arr[i]);
-			}		
-		}
-		else 
-		if(choice == 3){
-			fp = fopen("sorted_input.txt","r");
-			for(i=0 ; i<MAX ; i++){
-				fscanf(fp,"%d",&arr[i]);
-			}
+	int arr[max];
 	
-			p = MAX/100;
-			for(i=0;i<p;i++){
-				temp = arr[i];
-				arr[i]  = arr[p+i];
-				arr[p+i] = temp;
-			}	
+	printf("\nEnter choice:- \n");
+	printf("1. Random input\n");
+	printf("2. Sorted input\n");
+	printf("3. Sorted with 1%% as random input\n");
+	printf("4. Exit\n");
+	scanf("%d",&choice);
 		
+	if(choice == 1){
+		printf("Enter array elements:-\n");
+		for(i=0 ; i<max ; i++){
+			scanf("%d",&arr[i]);
 		}
-		else 
-		if(choice == 4){
-			exit(1);
+	}
+	else 
+	if(choice == 2){
+		printf("Enter array elements:-\n");
+		for(i=0 ; i<max ; i++){
+			scanf("%d",&arr[i]);
+		}		
+	}
+	else 
+	if(choice == 3){
+		printf("Enter array elements:-\n");
+		for(i=0 ; i<max ; i++){
+			scanf("%d",&arr[i]);
 		}
-		else{	
-			printf("\nInvalid choice!!\n");
-		}
-	
-		t1=clock();	
-	    
-		quicksort(arr,0,MAX-1);
-		
-		printf("\nAfter sorting:-\n");
-		for(i=0;i<MAX;i++){
-			printf("%d ",arr[i]);
+		p = max/100;
+		for(i=0;i<p;i++){
+			temp = arr[i];
+			arr[i]  = arr[p+i];
+			arr[p+i] = temp;
 		}	
 	
-		t2=clock();	
-		
-		double total_time=((double)(t2 -t1))/CLOCKS_PER_SEC;
-    	printf("\n\nTotal time of execution  = %f, when array size = %d\n", total_time, MAX);
-		printf("\n");
-		fclose(fp);
-		free(arr);
 	}
+	else 
+	if(choice == 4){
+		exit(1);
+	}
+	else{	
+		printf("\nInvalid choice!!\n");
+	}
+	
+	t1=clock();	
+	    
+	quickSort(arr,0,max-1);
+		
+	printf("\nAfter sorting:-\n");
+	for(i=0;i<max;i++){
+		printf("%d ",arr[i]);
+	}	
+	
+	t2=clock();	
+	
+	double total_time=((double)(t2 -t1))/CLOCKS_PER_SEC;
+    printf("\n\nTotal time of execution  = %f, when array size = %d\n", total_time, max);
+	
 	return 0;
 }
